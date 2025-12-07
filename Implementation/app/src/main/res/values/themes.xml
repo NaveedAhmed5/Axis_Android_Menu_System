@@ -1,0 +1,18 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Axis" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.Axis" parent="Base.Theme.Axis" />
+
+    <style name="Theme.Axis.Dark" parent="Base.Theme.Axis">
+        <item name="android:forceDarkAllowed">true</item>
+        <item name="colorPrimary">@color/purple_icon</item>
+    </style>
+
+    <style name="Theme.Axis.Sunset" parent="Base.Theme.Axis">
+        <item name="colorPrimary">@color/orange_icon</item>
+    </style>
+</resources>
