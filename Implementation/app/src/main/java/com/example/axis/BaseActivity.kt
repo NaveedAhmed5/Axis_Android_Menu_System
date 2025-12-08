@@ -55,11 +55,22 @@ open class BaseActivity : AppCompatActivity() {
                 rootView.setBackgroundColor(basePreferenceManager.dynamicBackground)
             }
         } else {
-            // For predefined wallpapers, we might want to show a solid color or a gradient
-            // But since we are doing dynamic theming, the background should probably be the dynamic background color
-            // unless it's a specific "image" wallpaper.
-            // For now, let's use the dynamic background color which is derived from the wallpaper
-            rootView.setBackgroundColor(basePreferenceManager.dynamicBackground)
+            val drawableRes = when (wallpaperName) {
+                "Ocean Sunset" -> R.drawable.wallpaper_ocean_sunset
+                "Rose Garden" -> R.drawable.wallpaper_rose_garden
+                "Forest Mist" -> R.drawable.wallpaper_forest_mist
+                "Fire Sky" -> R.drawable.wallpaper_fire_sky
+                "Deep Blue" -> R.drawable.wallpaper_deep_blue
+                "Aurora" -> R.drawable.wallpaper_aurora
+                "White" -> R.drawable.wallpaper_white
+                else -> 0
+            }
+            
+            if (drawableRes != 0) {
+                rootView.setBackgroundResource(drawableRes)
+            } else {
+                rootView.setBackgroundColor(basePreferenceManager.dynamicBackground)
+            }
         }
     }
 
