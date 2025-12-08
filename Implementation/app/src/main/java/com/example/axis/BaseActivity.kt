@@ -14,12 +14,20 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     private fun applyTheme() {
-        val themeName = basePreferenceManager.getTheme()
-        when (themeName) {
-            "Dark Theme" -> setTheme(R.style.Theme_Axis_Dark)
-            "Sunset Theme" -> setTheme(R.style.Theme_Axis_Sunset)
-            else -> setTheme(R.style.Theme_Axis) // Light/Default
+        // Apply dark mode setting
+        val darkModeEnabled = basePreferenceManager.isDarkModeEnabled
+        if (darkModeEnabled) {
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+            )
+        } else {
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+            )
         }
+        
+        // Apply base theme (DayNight)
+        setTheme(R.style.Theme_Axis)
     }
     
     override fun onResume() {
@@ -31,6 +39,9 @@ open class BaseActivity : AppCompatActivity() {
         val wallpaperName = basePreferenceManager.getWallpaper()
         val rootView = window.decorView.rootView
         
+        // Apply Dynamic Colors first
+        applyDynamicColors()
+        
         if (wallpaperName.startsWith("content://") || wallpaperName.startsWith("file://")) {
             try {
                 val uri = android.net.Uri.parse(wallpaperName)
@@ -40,32 +51,39 @@ open class BaseActivity : AppCompatActivity() {
                 inputStream?.close()
             } catch (e: Exception) {
                 e.printStackTrace()
-                // Fallback to default if image load fails
-                rootView.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                // Fallback to dynamic background
+                rootView.setBackgroundColor(basePreferenceManager.dynamicBackground)
             }
         } else {
-            // Map wallpaper names to colors
-            val color = when (wallpaperName) {
-                "Ocean Sunset" -> android.graphics.Color.parseColor("#5E60CE")
-                "Rose Garden" -> android.graphics.Color.parseColor("#E63946")
-                "Forest Mist" -> android.graphics.Color.parseColor("#06A77D")
-                "Fire Sky" -> android.graphics.Color.parseColor("#FF6D00")
-                "Deep Blue" -> android.graphics.Color.parseColor("#4361EE")
-                "Aurora" -> android.graphics.Color.parseColor("#B5179E")
-                "White" -> android.graphics.Color.WHITE
-                else -> android.graphics.Color.TRANSPARENT // Default/None
-            }
-            
-            if (color != android.graphics.Color.TRANSPARENT) {
-                rootView.setBackgroundColor(color)
-            } else {
-                // Reset to theme default if needed
-                // We can't easily "unset" a background color to theme default without recreating,
-                // but setting it to null or transparent usually reveals the window background.
-                // However, since we are setting the window background itself, we might want to clear it.
-                // For now, let's assume transparent means "no custom wallpaper".
-                rootView.setBackgroundColor(android.graphics.Color.WHITE) // Or theme default
-            }
+            // For predefined wallpapers, we might want to show a solid color or a gradient
+            // But since we are doing dynamic theming, the background should probably be the dynamic background color
+            // unless it's a specific "image" wallpaper.
+            // For now, let's use the dynamic background color which is derived from the wallpaper
+            rootView.setBackgroundColor(basePreferenceManager.dynamicBackground)
         }
+    }
+
+    private fun applyDynamicColors() {
+        val primary = basePreferenceManager.dynamicPrimary
+        val onPrimary = basePreferenceManager.dynamicOnPrimary
+        val background = basePreferenceManager.dynamicBackground
+        val onBackground = basePreferenceManager.dynamicOnBackground
+        
+        // Apply to Status Bar and Navigation Bar
+        window.statusBarColor = primary
+        window.navigationBarColor = background
+        
+        // Update Action Bar / Toolbar if present
+        supportActionBar?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(primary))
+        
+        // We can't easily update all UI elements here without traversing the view tree or using a library
+        // But we can set the window background
+        window.decorView.setBackgroundColor(background)
+        
+        // For text colors, we rely on the layout using ?attr/textColorPrimary etc.
+        // But since we can't dynamically update the theme attributes at runtime without RROs or extensive work,
+        // we will focus on the main container colors.
+        // To truly support dynamic text colors in standard views, we'd need to subclass TextView or iterate views.
+        // For this scope, ensuring the background and status bar match the theme is the key "dynamic" part.
     }
 }

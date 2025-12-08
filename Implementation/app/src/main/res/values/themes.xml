@@ -2,7 +2,9 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Axis" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textColorSecondary">#000000</item>
+        <item name="android:textColor">#000000</item>
     </style>
 
     <style name="Theme.Axis" parent="Base.Theme.Axis" />
@@ -10,6 +12,13 @@
     <style name="Theme.Axis.Dark" parent="Base.Theme.Axis">
         <item name="android:forceDarkAllowed">true</item>
         <item name="colorPrimary">@color/purple_icon</item>
+        <item name="colorOnPrimary">@color/text_primary</item>
+        <item name="colorSurface">@color/card_background</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="android:colorBackground">@color/background_light</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:windowBackground">@color/background_light</item>
     </style>
 
     <style name="Theme.Axis.Sunset" parent="Base.Theme.Axis">

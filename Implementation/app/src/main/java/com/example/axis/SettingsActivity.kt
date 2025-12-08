@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -45,81 +46,91 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupSettings() {
-        val settings = listOf(
-            SettingItem(
-                "Grid Size",
-                "Current: ${preferenceManager.gridRows} x ${preferenceManager.gridColumns}",
-                SettingType.GRID_SIZE
-            ),
-            SettingItem(
-                "Icon Size",
-                "Current: ${preferenceManager.iconSize}dp",
-                SettingType.ICON_SIZE
-            ),
-            SettingItem(
-                "Show Labels",
-                if (preferenceManager.showLabels) "Labels are shown" else "Labels are hidden",
-                SettingType.SHOW_LABELS
-            ),
-            SettingItem(
-                "Drawer Mode",
-                if (preferenceManager.drawerMode) "App drawer enabled" else "Classic mode (all apps on home)",
-                SettingType.DRAWER_MODE
-            ),
-            SettingItem(
-                "Appearance",
-                "Customize theme and colors",
-                SettingType.APPEARANCE
-            ),
-            SettingItem(
-                "Gestures & Inputs",
-                "Configure swipe gestures",
-                SettingType.GESTURES
-            ),
-            SettingItem(
-                "Profile",
-                "User info & stats",
-                SettingType.PROFILE
-            ),
-            SettingItem(
-                "Backup & Restore",
-                "Manage local backups",
-                SettingType.BACKUP_RESTORE
-            ),
-            SettingItem(
-                "Cloud Sync",
-                "Sync launcher data",
-                SettingType.CLOUD_SYNC
-            ),
-            SettingItem(
-                "Notifications",
-                "View recent alerts",
-                SettingType.NOTIFICATIONS
-            ),
-            SettingItem(
-                "Privacy & Security",
-                "Lock & permissions",
-                SettingType.PRIVACY_SECURITY
-            ),
-            SettingItem(
-                "About",
-                "App info & credits",
-                SettingType.ABOUT
-            ),
-            SettingItem(
-                "Icon Packs",
-                "Manage icon themes",
-                SettingType.ICON_PACKS
-            ),
-            SettingItem(
-                "Wallpapers",
-                "Set app background",
-                SettingType.WALLPAPERS
-            )
+        // Define items
+        val gridColumns = SettingItem(
+            "Grid Columns",
+            "Current: ${preferenceManager.gridColumns} columns",
+            SettingType.GRID_SIZE
+        )
+        val iconSize = SettingItem(
+            "Icon Size",
+            "Current: ${preferenceManager.iconSize}dp",
+            SettingType.ICON_SIZE
+        )
+        val showLabels = SettingItem(
+            "Show Labels",
+            if (preferenceManager.showLabels) "Labels are shown" else "Labels are hidden",
+            SettingType.SHOW_LABELS
+        )
+        val homeStyle = SettingItem(
+            "Home Screen Style",
+            if (preferenceManager.drawerMode) "Drawer (App Drawer enabled)" else "Classic (All apps on Home)",
+            SettingType.DRAWER_MODE
+        )
+        val appearance = SettingItem(
+            "Appearance",
+            "Theme, wallpaper & dark mode",
+            SettingType.APPEARANCE
+        )
+        val profile = SettingItem(
+            "Profile",
+            "User info & stats",
+            SettingType.PROFILE
+        )
+        val backup = SettingItem(
+            "Backup & Restore",
+            "Manage local backups",
+            SettingType.BACKUP_RESTORE
+        )
+        val cloudSync = SettingItem(
+            "Cloud Sync",
+            "Sync launcher data",
+            SettingType.CLOUD_SYNC
+        )
+        val notifications = SettingItem(
+            "Notifications",
+            "View recent alerts",
+            SettingType.NOTIFICATIONS
+        )
+        val privacy = SettingItem(
+            "Privacy & Security",
+            "Lock & permissions",
+            SettingType.PRIVACY_SECURITY
+        )
+        val about = SettingItem(
+            "About",
+            "App info & credits",
+            SettingType.ABOUT
+        )
+
+        // Organize into sections
+        val settingsItems = listOf(
+            // User Section
+            SettingsAdapter.SettingsListItem.Header("User"),
+            SettingsAdapter.SettingsListItem.Setting(profile),
+
+            // Display Section
+            SettingsAdapter.SettingsListItem.Header("Display"),
+            SettingsAdapter.SettingsListItem.Setting(gridColumns),
+            SettingsAdapter.SettingsListItem.Setting(iconSize),
+            SettingsAdapter.SettingsListItem.Setting(showLabels),
+            SettingsAdapter.SettingsListItem.Setting(homeStyle),
+            SettingsAdapter.SettingsListItem.Setting(appearance),
+
+            // Data & Sync Section
+            SettingsAdapter.SettingsListItem.Header("Data & Sync"),
+            SettingsAdapter.SettingsListItem.Setting(backup),
+            SettingsAdapter.SettingsListItem.Setting(cloudSync),
+
+            // System Section
+            SettingsAdapter.SettingsListItem.Header("System"),
+            SettingsAdapter.SettingsListItem.Setting(notifications),
+            SettingsAdapter.SettingsListItem.Setting(privacy),
+            SettingsAdapter.SettingsListItem.Setting(about)
         )
 
         settingsRecyclerView.layoutManager = LinearLayoutManager(this)
-        settingsRecyclerView.adapter = SettingsAdapter(settings) { settingItem ->
+        settingsRecyclerView.adapter = SettingsAdapter(settingsItems) { settingItem ->
             handleSettingClick(settingItem)
         }
     }
@@ -129,49 +140,23 @@ class SettingsActivity : AppCompatActivity() {
             SettingType.GRID_SIZE -> showGridSizeDialog()
             SettingType.ICON_SIZE -> showIconSizeDialog()
             SettingType.SHOW_LABELS -> toggleShowLabels()
-            SettingType.DRAWER_MODE -> toggleDrawerMode()
+            SettingType.DRAWER_MODE -> showHomeStyleDialog()
             SettingType.APPEARANCE -> showAppearanceSettings()
-            SettingType.GESTURES -> showGestureSettings()
             SettingType.PROFILE -> launch(ProfileActivity::class.java)
             SettingType.BACKUP_RESTORE -> launch(BackupRestoreActivity::class.java)
             SettingType.CLOUD_SYNC -> launch(CloudSyncActivity::class.java)
             SettingType.NOTIFICATIONS -> launch(NotificationsActivity::class.java)
             SettingType.PRIVACY_SECURITY -> launch(PrivacySecurityActivity::class.java)
             SettingType.ABOUT -> launch(AboutActivity::class.java)
-            SettingType.ICON_PACKS -> launch(IconPacksActivity::class.java)
             SettingType.WALLPAPERS -> launch(WallpapersActivity::class.java)
         }
     }
 
     private fun showGridSizeDialog() {
-        val rows = arrayOf("4", "5", "6", "7")
-        val columns = arrayOf("3", "4", "5")
-        
-        AlertDialog.Builder(this)
-            .setTitle("Grid Size")
-            .setMessage("Current: ${preferenceManager.gridRows} x ${preferenceManager.gridColumns}")
-            .setPositiveButton("Change Columns") { _, _ ->
-                showColumnDialog()
-            }
-            .setNegativeButton("Change Rows") { _, _ ->
-                showRowDialog()
-            }
-            .setNeutralButton("Cancel", null)
-            .show()
+        showColumnDialog()
     }
 
-    private fun showRowDialog() {
-        val rows = arrayOf("4", "5", "6", "7")
-        AlertDialog.Builder(this)
-            .setTitle("Select Rows")
-            .setItems(rows) { _, which ->
-                preferenceManager.gridRows = rows[which].toInt()
-                Toast.makeText(this, "Grid rows set to ${rows[which]}", Toast.LENGTH_SHORT).show()
-                syncManager.syncSettings()
-                setupSettings() // Refresh
-            }
-            .show()
-    }
+
 
     private fun showColumnDialog() {
         val columns = arrayOf("3", "4", "5")
@@ -212,95 +197,133 @@ class SettingsActivity : AppCompatActivity() {
         setupSettings() // Refresh
     }
 
-    private fun toggleDrawerMode() {
-        preferenceManager.drawerMode = !preferenceManager.drawerMode
-        Toast.makeText(
-            this,
-            if (preferenceManager.drawerMode) "App drawer enabled" else "Classic mode enabled",
-            Toast.LENGTH_SHORT
-        ).show()
-        syncManager.syncSettings()
-        setupSettings() // Refresh
-    }
-
-    private fun showAppearanceSettings() {
-        val themes = arrayOf("Light Theme", "Dark Theme", "Sunset Theme")
-        val currentTheme = preferenceManager.getTheme()
-        val checkedItem = when (currentTheme) {
-            "Dark Theme" -> 1
-            "Sunset Theme" -> 2
-            else -> 0
-        }
-
+    private fun showHomeStyleDialog() {
+        val styles = arrayOf("Drawer Mode", "Classic Mode")
+        val currentStyle = if (preferenceManager.drawerMode) 0 else 1
+        
         AlertDialog.Builder(this)
-            .setTitle("Select Theme")
-            .setSingleChoiceItems(themes, checkedItem) { dialog, which ->
-                val selectedTheme = themes[which]
-                preferenceManager.setTheme(selectedTheme)
-                syncManager.syncSettings()
-                Toast.makeText(this, "$selectedTheme Applied. Restarting...", Toast.LENGTH_SHORT).show()
+            .setTitle("Home Screen Style")
+            .setSingleChoiceItems(styles, currentStyle) { dialog, which ->
+                val newDrawerMode = which == 0
+                if (preferenceManager.drawerMode != newDrawerMode) {
+                    preferenceManager.drawerMode = newDrawerMode
+                    syncManager.syncSettings()
+                    setupSettings() // Refresh
+                    
+                    Toast.makeText(
+                        this,
+                        if (newDrawerMode) "Switched to Drawer Mode" else "Switched to Classic Mode",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
                 dialog.dismiss()
-                
-                // Restart activity to apply theme
-                val intent = intent
-                finish()
-                startActivity(intent)
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
 
-    private fun showGestureSettings() {
-        val gestures = arrayOf("Swipe Up", "Swipe Down", "Double Tap")
+    private fun showAppearanceSettings() {
+        val options = arrayOf(
+            "Theme",
+            "Wallpaper"
+        )
         
         AlertDialog.Builder(this)
-            .setTitle("Configure Gestures")
-            .setItems(gestures) { _, which ->
+            .setTitle("Appearance")
+            .setItems(options) { _, which ->
                 when (which) {
-                    0 -> showSwipeUpActionDialog()
-                    1 -> showSwipeDownActionDialog()
-                    2 -> showDoubleTapActionDialog()
+                    0 -> showThemeSelection()
+                    1 -> showWallpaperPicker()
                 }
             }
-            .setPositiveButton("Close", null)
+            .setNegativeButton("Close", null)
+            .show()
+    }
+    
+    private fun showThemeSelection() {
+        val themes = arrayOf("Light", "Dark")
+        val currentThemeIndex = if (preferenceManager.isDarkModeEnabled) 1 else 0
+
+        AlertDialog.Builder(this)
+            .setTitle("Select Theme")
+            .setSingleChoiceItems(themes, currentThemeIndex) { dialog, which ->
+                val isDark = which == 1
+                if (preferenceManager.isDarkModeEnabled != isDark) {
+                    preferenceManager.isDarkModeEnabled = isDark
+                    
+                    // Update dynamic colors for new mode
+                    val currentWallpaper = preferenceManager.getWallpaper()
+                    val colors = com.example.axis.utils.ThemeColorExtractor.getColorsForWallpaper(currentWallpaper, isDark)
+                    updateDynamicColors(colors)
+                    
+                    syncManager.syncSettings()
+                    
+                    // Apply change
+                    AppCompatDelegate.setDefaultNightMode(
+                        if (isDark) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+                    )
+                    
+                    dialog.dismiss()
+                    recreate() // Faster than finish/startActivity
+                } else {
+                    dialog.dismiss()
+                }
+            }
+            .setNegativeButton("Cancel", null)
             .show()
     }
 
-    private fun showSwipeUpActionDialog() {
-        val actions = arrayOf("App Drawer", "None")
+    private fun updateDynamicColors(colors: com.example.axis.utils.ThemeColorExtractor.ThemeColors) {
+        preferenceManager.dynamicPrimary = colors.primary
+        preferenceManager.dynamicOnPrimary = colors.onPrimary
+        preferenceManager.dynamicPrimaryContainer = colors.primaryContainer
+        preferenceManager.dynamicOnPrimaryContainer = colors.onPrimaryContainer
+        preferenceManager.dynamicBackground = colors.background
+        preferenceManager.dynamicOnBackground = colors.onBackground
+    }
+    
+    private fun showWallpaperPicker() {
+        val wallpapers = arrayOf(
+            "Default", 
+            "Ocean Sunset", 
+            "Rose Garden", 
+            "Forest Mist", 
+            "Fire Sky", 
+            "Deep Blue", 
+            "Aurora", 
+            "White",
+            "Custom Image..."
+        )
+        val currentWallpaper = preferenceManager.getWallpaper()
+        val checkedItem = wallpapers.indexOf(currentWallpaper).takeIf { it >= 0 } ?: 0
+        
         AlertDialog.Builder(this)
-            .setTitle("Swipe Up Action")
-            .setSingleChoiceItems(actions, 0) { dialog, _ ->
-                // Save preference (mock)
-                Toast.makeText(this, "Swipe Up Action Set", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
+            .setTitle("Select Wallpaper")
+            .setSingleChoiceItems(wallpapers, checkedItem) { dialog, which ->
+                if (which == wallpapers.size - 1) {
+                    // Custom Image option - launch WallpapersActivity
+                    dialog.dismiss()
+                    launch(WallpapersActivity::class.java)
+                } else {
+                    val selectedWallpaper = wallpapers[which]
+                    preferenceManager.setWallpaper(selectedWallpaper)
+                    
+                    // Extract and save new colors
+                    val isDark = preferenceManager.isDarkModeEnabled
+                    val colors = com.example.axis.utils.ThemeColorExtractor.getColorsForWallpaper(selectedWallpaper, isDark)
+                    updateDynamicColors(colors)
+                    
+                    syncManager.syncSettings()
+                    Toast.makeText(this, "$selectedWallpaper applied", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                    recreate() // Apply new theme colors immediately
+                }
             }
+            .setNegativeButton("Cancel", null)
             .show()
     }
 
-    private fun showSwipeDownActionDialog() {
-        val actions = arrayOf("Notifications", "None")
-        AlertDialog.Builder(this)
-            .setTitle("Swipe Down Action")
-            .setSingleChoiceItems(actions, 0) { dialog, _ ->
-                // Save preference (mock)
-                Toast.makeText(this, "Swipe Down Action Set", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-            }
-            .show()
-    }
 
-    private fun showDoubleTapActionDialog() {
-        val actions = arrayOf("Settings", "Screen Lock", "None")
-        AlertDialog.Builder(this)
-            .setTitle("Double Tap Action")
-            .setSingleChoiceItems(actions, 0) { dialog, _ ->
-                // Save preference (mock)
-                Toast.makeText(this, "Double Tap Action Set", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-            }
-            .show()
-    }
 
     private fun <T> launch(cls: Class<T>) {
         startActivity(android.content.Intent(this, cls))

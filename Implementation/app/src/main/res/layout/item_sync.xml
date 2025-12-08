@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:textSize="16sp"
-                android:textColor="@android:color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:text="Label" />
 
             <TextView
@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:textColor="@color/text_gray"
+                android:textColor="?android:attr/textColorSecondary"
                 android:layout_marginTop="4dp"
                 android:text="Time" />
         </LinearLayout>

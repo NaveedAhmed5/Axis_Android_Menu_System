@@ -39,14 +39,14 @@
                     android:text="Last Backup"
                     android:textStyle="bold"
                     android:textSize="16sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="?android:attr/textColorPrimary" />
 
                 <TextView
                     android:id="@+id/lastBackupText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="No backups yet"
-                    android:textColor="@color/text_gray"
+                    android:textColor="?android:attr/textColorSecondary"
                     android:layout_marginTop="8dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -96,7 +96,7 @@
                     android:layout_weight="1"
                     android:text="Auto Backup"
                     android:textStyle="bold"
-                    android:textColor="@android:color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="16sp" />
 
                 <Switch

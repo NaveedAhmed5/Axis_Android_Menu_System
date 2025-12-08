@@ -24,6 +24,15 @@ class PreferenceManager(context: Context) {
         private const val KEY_THEME = "theme"
         private const val KEY_WALLPAPER = "wallpaper"
         private const val KEY_PROFILE_IMAGE = "profile_image"
+        private const val KEY_DARK_MODE = "dark_mode_enabled"
+        
+        // Dynamic Colors
+        private const val KEY_DYN_PRIMARY = "dyn_primary"
+        private const val KEY_DYN_ON_PRIMARY = "dyn_on_primary"
+        private const val KEY_DYN_PRIMARY_CONTAINER = "dyn_primary_container"
+        private const val KEY_DYN_ON_PRIMARY_CONTAINER = "dyn_on_primary_container"
+        private const val KEY_DYN_BACKGROUND = "dyn_background"
+        private const val KEY_DYN_ON_BACKGROUND = "dyn_on_background"
     }
 
     fun getProfileImage(): String? {
@@ -137,6 +146,11 @@ class PreferenceManager(context: Context) {
         prefs.edit().putString(KEY_WALLPAPER, wallpaper).apply()
     }
     
+    // Dark Mode
+    var isDarkModeEnabled: Boolean
+        get() = prefs.getBoolean(KEY_DARK_MODE, false)
+        set(value) = prefs.edit().putBoolean(KEY_DARK_MODE, value).apply()
+    
     // Additional settings
     var showAppLabels: Boolean
         get() = prefs.getBoolean(KEY_SHOW_LABELS, true)
@@ -153,4 +167,29 @@ class PreferenceManager(context: Context) {
     var iconPack: String
         get() = prefs.getString("icon_pack", "classic") ?: "classic"
         set(value) = prefs.edit().putString("icon_pack", value).apply()
+        
+    // Dynamic Colors
+    var dynamicPrimary: Int
+        get() = prefs.getInt(KEY_DYN_PRIMARY, android.graphics.Color.parseColor("#6750A4"))
+        set(value) = prefs.edit().putInt(KEY_DYN_PRIMARY, value).apply()
+        
+    var dynamicOnPrimary: Int
+        get() = prefs.getInt(KEY_DYN_ON_PRIMARY, android.graphics.Color.WHITE)
+        set(value) = prefs.edit().putInt(KEY_DYN_ON_PRIMARY, value).apply()
+        
+    var dynamicPrimaryContainer: Int
+        get() = prefs.getInt(KEY_DYN_PRIMARY_CONTAINER, android.graphics.Color.parseColor("#EADDFF"))
+        set(value) = prefs.edit().putInt(KEY_DYN_PRIMARY_CONTAINER, value).apply()
+        
+    var dynamicOnPrimaryContainer: Int
+        get() = prefs.getInt(KEY_DYN_ON_PRIMARY_CONTAINER, android.graphics.Color.parseColor("#21005D"))
+        set(value) = prefs.edit().putInt(KEY_DYN_ON_PRIMARY_CONTAINER, value).apply()
+        
+    var dynamicBackground: Int
+        get() = prefs.getInt(KEY_DYN_BACKGROUND, android.graphics.Color.parseColor("#F5F5F5"))
+        set(value) = prefs.edit().putInt(KEY_DYN_BACKGROUND, value).apply()
+        
+    var dynamicOnBackground: Int
+        get() = prefs.getInt(KEY_DYN_ON_BACKGROUND, android.graphics.Color.parseColor("#1C1B1F"))
+        set(value) = prefs.edit().putInt(KEY_DYN_ON_BACKGROUND, value).apply()
 }
