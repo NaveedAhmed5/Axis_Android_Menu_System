@@ -47,7 +47,7 @@ interface ApiService {
 
     @POST("sync_favorites.php")
     fun updateFavorites(
-        @Body body: Map<String, Any> // Expecting user_id and favorites list
+        @Body body: com.example.axis.api.models.FavoritesRequest
     ): Call<FavoritesResponse>
 
     @GET("sync_favorites.php")

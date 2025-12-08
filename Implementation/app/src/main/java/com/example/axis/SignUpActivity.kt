@@ -31,16 +31,44 @@ class SignUpActivity : AppCompatActivity() {
     ) { uri: android.net.Uri? ->
         uri?.let {
             ivProfileImage.setImageURI(it)
-            // Convert to Base64
+            // Convert to Base64 with compression
             try {
                 val inputStream = contentResolver.openInputStream(it)
-                val bytes = inputStream?.readBytes()
+                val originalBitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
                 inputStream?.close()
-                if (bytes != null) {
+
+                if (originalBitmap != null) {
+                    // Resize if too large (max 800px)
+                    val maxDimension = 800
+                    val ratio = Math.min(
+                        maxDimension.toDouble() / originalBitmap.width,
+                        maxDimension.toDouble() / originalBitmap.height
+                    )
+                    
+                    val finalBitmap = if (ratio < 1.0) {
+                        val width = (originalBitmap.width * ratio).toInt()
+                        val height = (originalBitmap.height * ratio).toInt()
+                        android.graphics.Bitmap.createScaledBitmap(originalBitmap, width, height, true)
+                    } else {
+                        originalBitmap
+                    }
+
+                    // Compress to JPEG
+                    val outputStream = java.io.ByteArrayOutputStream()
+                    finalBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 70, outputStream)
+                    val bytes = outputStream.toByteArray()
+                    
                     selectedImageBase64 = android.util.Base64.encodeToString(bytes, android.util.Base64.DEFAULT)
+                    
+                    // Cleanup
+                    if (finalBitmap != originalBitmap) {
+                        finalBitmap.recycle()
+                    }
+                    originalBitmap.recycle()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                Toast.makeText(this, "Error processing image", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -127,6 +155,12 @@ class SignUpActivity : AppCompatActivity() {
                         preferenceManager.setUserEmail(email)
                         preferenceManager.setUserName(fullName)
                         preferenceManager.setLoggedIn(true)
+                        
+                        // Save User ID
+                        authResponse.userId?.let {
+                            preferenceManager.setUserId(it)
+                        }
+                        
                         selectedImageBase64?.let {
                             preferenceManager.setProfileImage(it)
                         }

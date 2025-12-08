@@ -54,7 +54,7 @@ class SyncManager(private val context: Context) {
         }
 
         val favorites = preferenceManager.getFavoriteApps().toList()
-        val body = mapOf("user_id" to userId, "favorites" to favorites)
+        val body = com.example.axis.api.models.FavoritesRequest(userId, favorites)
 
         val call = ApiClient.apiService.updateFavorites(body)
 

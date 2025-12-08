@@ -12,5 +12,6 @@ data class AuthResponse(
 data class User(
     @SerializedName("id") val id: Int,
     @SerializedName("username") val username: String,
-    @SerializedName("email") val email: String
+    @SerializedName("email") val email: String,
+    @SerializedName("profile_image") val profileImage: String?
 )
