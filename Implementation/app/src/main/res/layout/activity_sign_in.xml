@@ -81,6 +81,7 @@
                 android:inputType="textEmailAddress"
                 android:drawableStart="@drawable/ic_email"
                 android:drawablePadding="12dp"
+                android:textColor="#000000"
                 android:padding="16dp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -119,6 +120,7 @@
                 android:inputType="textPassword"
                 android:drawableStart="@drawable/ic_lock"
                 android:drawablePadding="12dp"
+                android:textColor="#000000"
                 android:padding="16dp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
